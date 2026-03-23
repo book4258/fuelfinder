@@ -9,7 +9,7 @@ import { Suspense, useEffect } from 'react';
 import { Toaster }             from 'react-hot-toast';
 import { useStore }            from '@/lib/store';
 import { useAuth }             from '@/hooks/useAuth';
-import { BottomNav }           from '@/components/layout/BottomNav';
+import BottomNav from "@/components/layout/BottomNav";
 
 function DarkModeSync() {
   const { darkMode } = useStore();
