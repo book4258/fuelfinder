@@ -1,0 +1,47 @@
+// firestore.rules
+// Deploy with: firebase deploy --only firestore:rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ──────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ─── Stations ─────────────────────────────────────────────────────────
+    // Public read; only authenticated users can update (via cloud fn ideally)
+    match /stations/{stationId} {
+      allow read: if true;
+      allow create: if false; // Only via Admin SDK / seed script
+      allow update: if isSignedIn();  // Restrict further with trust score check in prod
+    }
+
+    // ─── Reports ──────────────────────────────────────────────────────────
+    match /reports/{reportId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll(['stationId','userId','fuelType','status','timestamp']);
+      allow update: if isSignedIn()
+        // Only allow upvote/downvote field changes
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['upvotes', 'downvotes']);
+      allow delete: if false;
+    }
+
+    // ─── Users ────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read:   if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId)
+        // Prevent self-inflating trustScore beyond +5 per write
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['trustScore'])
+            || request.resource.data.trustScore <= resource.data.trustScore + 5);
+    }
+  }
+}

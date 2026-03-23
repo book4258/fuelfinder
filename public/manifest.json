@@ -1,0 +1,24 @@
+{
+  "name": "FuelTH – หาน้ำมันใกล้คุณ",
+  "short_name": "FuelTH",
+  "description": "ตรวจสอบน้ำมันว่าง-เต็มแบบเรียลไทม์จากปั๊มทั่วไทย",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "lang": "th",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["navigation", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshot-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
